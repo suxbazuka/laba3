@@ -21,7 +21,6 @@ namespace EnemyEditor
                 baseGold, goldModifier, spawnChance));
         }
 
-        // НОВЫЙ МЕТОД: обновление врага
         public bool UpdateEnemy(string oldName, string newName, string iconName, int baseLife,
             double lifeModifier, int baseGold, double goldModifier, double spawnChance)
         {

@@ -4,11 +4,10 @@ using EnemyEditor;
 
 namespace Clicker
 {
-    /// <summary>Случайный выбор шаблона с учётом нормализованных шансов появления.</summary>
     public class EnemySpawner
     {
         private readonly List<CEnemyTemplate> _templates = new List<CEnemyTemplate>();
-        private readonly List<double> _chances = new List<double>(); // сумма = 1
+        private readonly List<double> _chances = new List<double>();
         private readonly Random _random = new Random();
 
         public EnemySpawner(CEnemyTemplateList list)
@@ -42,7 +41,7 @@ namespace Clicker
                 if (sum > 0)
                     _chances.Add(Math.Max(0, t.SpawnChance) / sum);
                 else
-                    _chances.Add(1.0 / _templates.Count); // все шансы нулевые - выбираем равновероятно
+                    _chances.Add(1.0 / _templates.Count);
             }
         }
 
@@ -56,7 +55,7 @@ namespace Clicker
                 acc += _chances[i];
                 if (roll < acc) return _templates[i];
             }
-            return _templates[_templates.Count - 1]; // страховка от погрешности double
+            return _templates[_templates.Count - 1];
         }
     }
 }
