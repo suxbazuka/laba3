@@ -2,10 +2,7 @@ using EnemyEditor;
 
 namespace Clicker
 {
-    /// <summary>
-    /// Противник на сцене (не шаблон): текущее здоровье и награда.
-    /// Здоровье меняется только через TakeDamage.
-    /// </summary>
+
     public class CEnemy
     {
         private const int ModifierPrecision = 1000;
@@ -16,8 +13,6 @@ namespace Clicker
         public BigNumber CurrentHealth { get; private set; }
         public BigNumber Reward { get; private set; }
 
-        /// <param name="template">шаблон из редактора</param>
-        /// <param name="stage">сколько противников уже побеждено</param>
         public CEnemy(CEnemyTemplate template, int stage)
         {
             Name = template.Name;

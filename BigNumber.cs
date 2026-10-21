@@ -3,23 +3,16 @@ using System.Text;
 
 namespace Clicker
 {
-    /// <summary>
-    /// Неизменяемое неотрицательное целое число произвольной длины.
-    /// Хранится как массив блоков по 4 десятичных разряда (little-endian:
-    /// _blocks[0] - младший блок). Все операции реализованы поразрядно,
-    /// без long / double / System.Numerics.BigInteger.
-    /// </summary>
+
     public sealed class BigNumber : IComparable<BigNumber>, IEquatable<BigNumber>
     {
-        private const int Base = 10000;      // 10^4: произведение двух блоков (< 10^8) помещается в int
-        private const int BlockLength = 4;   // число десятичных цифр в блоке
+        private const int Base = 10000;
+        private const int BlockLength = 4;
 
-        private readonly int[] _blocks;      // readonly + private => объект нельзя изменить после создания
+        private readonly int[] _blocks;
 
         public static readonly BigNumber Zero = new BigNumber(new int[] { 0 });
         public static readonly BigNumber One = new BigNumber(1);
-
-        // ---------- Конструкторы ----------
 
         private BigNumber(int[] blocks)
         {
@@ -77,16 +70,11 @@ namespace Clicker
             return new BigNumber(blocks);
         }
 
-        // ---------- Свойства ----------
-
         public bool IsZero
         {
             get { return _blocks.Length == 1 && _blocks[0] == 0; }
         }
 
-        // ---------- Приватная арифметика (вся логика здесь) ----------
-
-        // Убираем ведущие нулевые блоки (кроме единственного нуля).
         private static int[] Trim(int[] blocks)
         {
             if (blocks == null || blocks.Length == 0)
@@ -102,7 +90,6 @@ namespace Clicker
             return result;
         }
 
-        // Сложение столбиком: блок за блоком с переносом.
         private static BigNumber Add(BigNumber a, BigNumber b)
         {
             int len = Math.Max(a._blocks.Length, b._blocks.Length);
@@ -123,7 +110,6 @@ namespace Clicker
             return new BigNumber(result);
         }
 
-        // Вычитание столбиком с займом. Требует a >= b.
         private static BigNumber Subtract(BigNumber a, BigNumber b)
         {
             if (a.CompareTo(b) < 0)
@@ -152,7 +138,6 @@ namespace Clicker
             return new BigNumber(result);
         }
 
-        // Умножение "в столбик": каждый блок a на каждый блок b.
         private static BigNumber Multiply(BigNumber a, BigNumber b)
         {
             int[] result = new int[a._blocks.Length + b._blocks.Length];
@@ -178,8 +163,6 @@ namespace Clicker
             return DivMod(a, b, out remainder);
         }
 
-        // Деление уголком. На каждом шаге "сносим" очередной блок в остаток,
-        // а цифру частного (0..Base-1) подбираем бинарным поиском.
         private static BigNumber DivMod(BigNumber a, BigNumber b, out BigNumber remainder)
         {
             if (b.IsZero)
@@ -190,7 +173,7 @@ namespace Clicker
 
             for (int i = a._blocks.Length - 1; i >= 0; i--)
             {
-                // rem = rem * Base + a[i]  (сдвиг на один блок)
+
                 int[] shifted = new int[rem._blocks.Length + 1];
                 shifted[0] = a._blocks[i];
                 Array.Copy(rem._blocks, 0, shifted, 1, rem._blocks.Length);
@@ -214,8 +197,6 @@ namespace Clicker
             remainder = rem;
             return new BigNumber(quotient);
         }
-
-        // ---------- Публичное API ----------
 
         public static BigNumber Pow(BigNumber value, int exponent)
         {
@@ -269,7 +250,6 @@ namespace Clicker
             }
         }
 
-        // Старший блок печатается как есть, остальные дополняются нулями слева до 4 цифр.
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -280,8 +260,6 @@ namespace Clicker
 
             return sb.ToString();
         }
-
-        // ---------- Операторы (только делегируют приватным методам) ----------
 
         public static BigNumber operator +(BigNumber a, BigNumber b) { return Add(a, b); }
         public static BigNumber operator -(BigNumber a, BigNumber b) { return Subtract(a, b); }
